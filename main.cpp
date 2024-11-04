@@ -15,6 +15,8 @@ int main(int argc, char* argv[])
     duck::ini::Root root;
     root.load("../docs/config.ini");
 
+    std::cout << root.str() << std::endl;
+
     // root.set<float>("ISP_AWB", "r_gain", 1.1);
     // root.set<float>("ISP_AWB", "g_gain", 1.2);
     // root.set<float>("ISP_AWB", "b_gain", 1.3);

@@ -195,11 +195,35 @@ public:
         data.set(value);
         root_map_[section][key] = data;
     }
+
+    std::string str() {
+
+        std::stringstream ss;
+        for (const auto& section_pair :  root_map_) {
+            std::string section_name = section_pair.first;
+            ss << "[" << section_name << "]" << std::endl;
+            auto& section_map = section_pair.second;
+            for (const auto& key_pair : section_map) {
+                std::string key_name = key_pair.first;
+                Value value = key_pair.second;
+
+                ss << key_name << " = " << value.str() << std::endl;
+
+            }
+            ss << std::endl;
+        }
+
+        return ss.str();
+    }
  
 
 private: 
 
     std::map<std::string, std::map<std::string, Value > > root_map_;
+
+    std::map<std::string, std::string> section_comment_;
+    std::map<std::string, std::string> key_comment_;
+    std::map<std::string, std::string> value_comment_;
 };
 
 
