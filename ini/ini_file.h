@@ -62,7 +62,75 @@ private:
 };
 
 
+class Key
+{
+public:
+    Key(const std::string& key_name, Value value, const std::string& comment_ = std::string(), const std::string& right_comment_ = std::string()) 
+        : key_name_(key_name), value_(value), comment_(comment), right_comment_(right_comment) {
+        
+    }
 
+    void set(Value value, const std::string& comment_ = std::string(), const std::string& right_comment_ = std::string()) {
+        value_ = value;
+        comment_
+    }
+private:
+    std::string key_name_;
+    Value value_;
+    std::string comment_;
+    std::string right_comment_;
+    
+};
+
+
+class Section
+{
+public:
+    Section(const std::string& section_name, const std::string& comment_ = std::string(), const std::string& right_comment_ = std::string()) 
+        : section_name_(section_name), comment_(comment), right_comment_(right_comment) {
+
+    }
+
+    int get_key_id(const std::string& key_name) {
+        auto& it = key_map_.find(key_name);
+        if (it == key_map_.end()) {
+            return -1;
+        }
+        return it.second;
+    }
+
+    void insert_key(const std::string& key_name, Value value, const std::string& comment_ = std::string(), const std::string& right_comment_ = std::string()) {
+
+        int key_id = get_key_id(key_name);
+        if (key_id < 0) {
+            Key key(key_name, value, comment_, right_comment_);
+            key_map_[key_name] = section_.size();
+            section_.push_back(key);
+        }
+        else {
+            section_[key_id].set(value, comment_, right_comment_);
+        }
+    }
+
+    void set(const std::string& key_name, Value value) {
+
+    }
+
+    void set_comment(const std::string& key_name, const std::string& comment_ = std::string(), const std::string& right_comment_ = std::string()) {
+        
+    }
+
+    
+
+
+
+private:
+    std::string section_name_;
+    std::string comment_;
+    std::string right_comment_;
+    std::vector<Key> section_;
+    std::map<std::string, int> key_map_;
+};
 
 
 class Root
@@ -71,58 +139,58 @@ public:
 
     int load(const std::string& file_name) {
 
-        root_map_.clear();
-        std::ifstream ifs(file_name);
-        if (ifs.fail()) {
-            LOG(WARNING) << "Failed to load ini file: " << file_name << "!";
-            return -1;
-        }
+        // root_map_.clear();
+        // std::ifstream ifs(file_name);
+        // if (ifs.fail()) {
+        //     LOG(WARNING) << "Failed to load ini file: " << file_name << "!";
+        //     return -1;
+        // }
  
-        std::string line;
-        std::string section_name = "";
-        size_t line_num = 0;
-        while(std::getline(ifs, line))
-        {
-            line_num++;
-            line = trim(line);
-            if (line.empty()) {
-                continue;
-            }
-            if ((line[0] == '#') || (line[0] == ';')) //it's comment
-            {
-                continue;
-            }
-            if (line[0] == '[') // it's section
-            {
-                auto pos = line.find_first_of(']');
-                if (pos == std::string::npos) {
-                    LOG(WARNING) << file_name << " line: " << line_num << " section format error, missing ] !";
-                    continue;
-                }
-                section_name = trim(line.substr(1, pos - 1));
-            }
-            else //it's key = value
-            {
-                auto pos = line.find_first_of('=');
-                if (pos == std::string::npos) {
-                    LOG(WARNING) << file_name << " line: " << line_num << " key-value format error, missing = !";
-                    continue;
-                }
+        // std::string line;
+        // std::string section_name = "";
+        // size_t line_num = 0;
+        // while(std::getline(ifs, line))
+        // {
+        //     line_num++;
+        //     line = trim(line);
+        //     if (line.empty()) {
+        //         continue;
+        //     }
+        //     if ((line[0] == '#') || (line[0] == ';')) //it's comment
+        //     {
+        //         continue;
+        //     }
+        //     if (line[0] == '[') // it's section
+        //     {
+        //         auto pos = line.find_first_of(']');
+        //         if (pos == std::string::npos) {
+        //             LOG(WARNING) << file_name << " line: " << line_num << " section format error, missing ] !";
+        //             continue;
+        //         }
+        //         section_name = trim(line.substr(1, pos - 1));
+        //     }
+        //     else //it's key = value
+        //     {
+        //         auto pos = line.find_first_of('=');
+        //         if (pos == std::string::npos) {
+        //             LOG(WARNING) << file_name << " line: " << line_num << " key-value format error, missing = !";
+        //             continue;
+        //         }
 
-                if (section_name.empty()) {
-                    LOG(WARNING) << file_name << ": missing section !";
-                    return -1;
-                }
+        //         if (section_name.empty()) {
+        //             LOG(WARNING) << file_name << ": missing section !";
+        //             return -1;
+        //         }
 
-                std::string key_name = line.substr(0, pos);
-                key_name = trim(key_name);
-                std::string value_str = line.substr(pos + 1);
-                value_str = trim(value_str);
+        //         std::string key_name = line.substr(0, pos);
+        //         key_name = trim(key_name);
+        //         std::string value_str = line.substr(pos + 1);
+        //         value_str = trim(value_str);
 
-                Value value(value_str);
-                root_map_[section_name][key_name] = value;
-            }
-        }
+        //         Value value(value_str);
+        //         root_map_[section_name][key_name] = value;
+        //     }
+        // }
 
         return 0;
     }
@@ -146,24 +214,24 @@ public:
 
     void print_root_map() {
 
-        std::cout << std::left << std::setw(40) << std::setfill('-')<< "ini root begin"  << std::setfill(' ') << std::endl;  
-        std::cout << std::left << std::setw(20) << "key_name" << std::setw(20) << "value" << std::endl;
+        // std::cout << std::left << std::setw(40) << std::setfill('-')<< "ini root begin"  << std::setfill(' ') << std::endl;  
+        // std::cout << std::left << std::setw(20) << "key_name" << std::setw(20) << "value" << std::endl;
 
-        for (const auto& section_pair :  root_map_) {
-            std::string section_name = section_pair.first;
-            auto& section_map = section_pair.second;
-            for (const auto& key_pair : section_map) {
-                std::string key_name = key_pair.first;
-                Value value = key_pair.second;
+        // for (const auto& section_pair :  root_map_) {
+        //     std::string section_name = section_pair.first;
+        //     auto& section_map = section_pair.second;
+        //     for (const auto& key_pair : section_map) {
+        //         std::string key_name = key_pair.first;
+        //         Value value = key_pair.second;
 
-                std::string info_name = section_name + "." + key_name;
-                std::cout << std::left << std::setw(20) <<  info_name << std::setw(20) << value.str() << std::endl;
+        //         std::string info_name = section_name + "." + key_name;
+        //         std::cout << std::left << std::setw(20) <<  info_name << std::setw(20) << value.str() << std::endl;
 
-            }
-        }
+        //     }
+        // }
 
-        std::cout << std::left << std::setw(40) << std::setfill('-')<< "ini root end"  << std::setfill(' ') << std::endl;  
-        std::cout << std::endl;
+        // std::cout << std::left << std::setw(40) << std::setfill('-')<< "ini root end"  << std::setfill(' ') << std::endl;  
+        // std::cout << std::endl;
     }
 
     bool has_value(const std::string& section, const std::string& key) {
@@ -193,6 +261,8 @@ public:
     void set(const std::string& section, const std::string& key, T value) {
         Value data;
         data.set(value);
+
+
         root_map_[section][key] = data;
     }
 
@@ -219,12 +289,10 @@ public:
 
 private: 
 
-    std::map<std::string, std::map<std::string, Value > > root_map_;
-
-    std::map<std::string, std::string> section_comment_;
-    std::map<std::string, std::string> key_comment_;
-    std::map<std::string, std::string> value_comment_;
+    std::vector<Section> root_;
 };
+
+
 
 
 }//namespace ini
