@@ -191,10 +191,6 @@ public:
             return -1;
         }
 
-   
-        
- 
- 
         std::string line;
         std::string comment; 
         std::string section_name;
@@ -401,7 +397,6 @@ public:
     
 
 private: 
-
     std::vector<std::shared_ptr<Section> > section_vec_;
     std::map<std::string, int> section_map_;
 };

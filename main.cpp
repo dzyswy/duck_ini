@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     FLAGS_stderrthreshold = 0;
     FLAGS_minloglevel = 0;
 
-    //value_test();
+    value_test();
 
     
     duck::ini::Root root;
@@ -78,9 +78,8 @@ void value_test()
 
     v_bool.set<bool>(true);
     v_float.set<float>(3.14);
-    v_double.set<double>(3.1415926);
-    //v_string.set("hello"); 
-    //v_string.set(std::string("hello"));
+    v_double.set<double>(3.1415926); 
+    v_string.set<std::string>(std::string("hello"));
 
     int r_int = v_int.get<int>();
     long r_long = v_long.get<long>();
