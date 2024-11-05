@@ -1,7 +1,7 @@
 #include "ini/ini_file.h"
 
 
-
+void value_test();
 
 int main(int argc, char* argv[])
 {
@@ -11,12 +11,13 @@ int main(int argc, char* argv[])
     FLAGS_stderrthreshold = 0;
     FLAGS_minloglevel = 0;
 
+    //value_test();
+
     
     duck::ini::Root root;
     root.load("../docs/config.ini");
 
-    std::cout << root.str() << std::endl;
-
+    
     // root.set<float>("ISP_AWB", "r_gain", 1.1);
     // root.set<float>("ISP_AWB", "g_gain", 1.2);
     // root.set<float>("ISP_AWB", "b_gain", 1.3);
@@ -24,7 +25,8 @@ int main(int argc, char* argv[])
     // root.set<unsigned int>("ISP_AE", "gray_level", 1024);
     // root.set<float>("ISP_AE", "ae_gain", 15.0);
 
-    root.print_root_map();
+    std::cout << root.str() << std::endl;
+
 
     float r_gain = root.get<float>("ISP_AWB", "r_gain", 1.0);
     float g_gain = root.get<float>("ISP_AWB", "g_gain", 1.0);
@@ -44,10 +46,15 @@ int main(int argc, char* argv[])
 
     std::cout << "dev_name=" << dev_name << std::endl;
 
+    root.set<std::string>("DEVICE", "dev_name", dev_name);
+
+    root.save("config.ini");
+
     return 0;
 }
 
-void value_test() {
+void value_test() 
+{
 
     duck::ini::Value v_int;
     duck::ini::Value v_long;
@@ -72,7 +79,7 @@ void value_test() {
     v_bool.set<bool>(true);
     v_float.set<float>(3.14);
     v_double.set<double>(3.1415926);
-    v_string.set("hello"); 
+    //v_string.set("hello"); 
     //v_string.set(std::string("hello"));
 
     int r_int = v_int.get<int>();
